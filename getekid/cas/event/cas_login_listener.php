@@ -63,14 +63,25 @@ class cas_login_listener implements EventSubscriberInterface
 		$this->phpbb_root_path = $phpbb_root_path;
 	}
 
+    public function endsWith($haystack, $needle) {
+        return $needle === "" ||
+            (($temp = strlen($haystack) - strlen($needle)) >= 0 &&
+            strpos($haystack, $needle, $temp) !== false);
+}
+
 	public function login_after_cas_redirect($event)
     {
-        if ($this->user->data['username'] == 'Anonymous') {
-            unset($_SESSION['phpBBCAS']);
+        //print_r($_SESSION);
+        $username = $this->user->data['username'];
+        //echo $username;
+        if ($username == 'Anonymous') {
             if (array_key_exists('phpCAS', $_SESSION))
                 $this->auth->login('', '');
         } else {
-            if (!array_key_exists('phpCAS', $_SESSION))
+            if (($this->endsWith($username, '_github') ||
+                 $this->endsWith($username, '_weibo') ||
+                 $this->endsWith($username, '_qq')) &&
+                !array_key_exists('phpCAS', $_SESSION))
                 $this->user->session_kill();
         }
 

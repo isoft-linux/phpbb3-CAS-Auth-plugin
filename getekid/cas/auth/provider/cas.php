@@ -291,7 +291,7 @@ class cas extends \phpbb\auth\provider\base
 		{
 			phpCAS::logout();
 		}
-	}
+    }
 
 	private function get_user_row($username, $default_row = array(), $select_all = true)
 	{
