@@ -58,34 +58,14 @@ class cas_login_listener implements EventSubscriberInterface
 		$this->config = $config;
 		$this->request = $request;
 		$this->auth = $auth;
-        $this->user = $user;
+		$this->user = $user;
 		$this->template = $template;
 		$this->phpbb_root_path = $phpbb_root_path;
 	}
 
-    public function endsWith($haystack, $needle) {
-        return $needle === "" ||
-            (($temp = strlen($haystack) - strlen($needle)) >= 0 &&
-            strpos($haystack, $needle, $temp) !== false);
-}
-
 	public function login_after_cas_redirect($event)
-    {
-        //print_r($_SESSION);
-        $username = $this->user->data['username'];
-        //echo $username;
-        if ($username == 'Anonymous') {
-            if (array_key_exists('phpCAS', $_SESSION))
-                $this->auth->login('', '');
-        } else {
-            if (($this->endsWith($username, '_github') ||
-                 $this->endsWith($username, '_weibo') ||
-                 $this->endsWith($username, '_qq')) &&
-                !array_key_exists('phpCAS', $_SESSION))
-                $this->user->session_kill();
-        }
-
-        // Get the ticket from the URL and login in order to validate it
+	{
+		// Get the ticket from the URL and login in order to validate it
 		$cas_ticket = $this->request->variable('ticket', '', true, \phpbb\request\request_interface::GET);
 		if ($cas_ticket)
 		{
